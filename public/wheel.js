@@ -1,3 +1,4 @@
+let currentToken = null;
 // ===== 奖池 =====
 const rewards = [
   "18K","28K","38K","58K",
@@ -24,8 +25,6 @@ function createWheel() {
   document.body.appendChild(modal);
 
   drawWheel();
-
-  document.getElementById("spinBtn").onclick = startWheelLottery;
 }
 
 // ===== 绘制转盘 =====
@@ -137,7 +136,7 @@ function spinWheel(rewardText) {
   resultEl.innerText = "⏳ 抽奖中...";
 
   try {
-    const res = await fetch("/api/lottery", {
+    const res = await fetch("https://g168code.site/api/lottery", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -253,13 +252,16 @@ function showRewardModal(reward) {
 // ===== 页面加载时校验 =====
 window.onload = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("token");
+  currentToken = urlParams.get("token");
 
-  if (!token) {
-  showErrorModal("请先获取抽奖码");
-  return;
-}
-// 直接转
-openWheel();
-startWheelLottery(token);
+  if (!currentToken) {
+    showErrorModal("请先获取抽奖码");
+    return;
+  }
+
+  openWheel();
+
+  document.getElementById("spinBtn").onclick = () => {
+    startWheelLottery(currentToken);
+  };
 };

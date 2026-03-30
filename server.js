@@ -90,6 +90,6 @@ app.post("/api/lottery", async (req, res) => {
 // ===== 启动 =====
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log("🚀 server running on", PORT);
 });
