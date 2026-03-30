@@ -157,9 +157,12 @@ function spinWheel(rewardText) {
   return;
 }
 
-    await spinWheel(data.reward);
+    const rewardFull = data.reward;       // 88000
+const rewardK = rewardFull / 1000;    // 88
 
-    resultEl.innerText = "🎉 恭喜中奖：" + data.reward;
+await spinWheel(rewardK + "K");
+
+resultEl.innerText = "🎉 恭喜中奖：" + rewardFull;
 
     // 🔥 弹窗
     setTimeout(() => {
@@ -261,7 +264,11 @@ window.onload = async () => {
 
   openWheel();
 
-  document.getElementById("spinBtn").onclick = () => {
-    startWheelLottery(currentToken);
-  };
+// 🔥 自动执行（关键）
+startWheelLottery(currentToken);
+
+// 按钮保留（可选）
+document.getElementById("spinBtn").onclick = () => {
+  startWheelLottery(currentToken);
+};
 };
