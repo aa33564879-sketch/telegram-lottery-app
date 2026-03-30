@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/wheel.css">
+  <meta charset="UTF-8" />
+  <title>G168 活动</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #facc15;
+}
+
+.game-btn {
+  background: #22c55e;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.game-btn:active {
+  opacity: 0.8;
+}
+
+    body {
+  margin: 0;
+  background: #e2e8f0; /* 更灰一点 */
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+    .app {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  background: #f8fafc;
+
+  border-radius: 20px;             /* 圆角 */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* 阴影 */
+
+  margin: 10px;                    /* 四周留白 */
+  overflow: hidden;                /* 防止溢出 */
+}
+
+    /* 用户 */
+    .user-box {
+      background: white;
+      margin: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      color: #334155;
+      font-size: 14px;
+    }
+
+    /* Banner */
+    .banner {
+      margin: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .banner img {
+      width: 100%;
+      display: block;
+    }
+
+    /* 卡片 */
+    .card {
+      background: white;
+      margin: 12px;
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    /* 按钮 */
+    .btn {
+      background: #2563eb;
+      color: white;
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .btn:active {
+      opacity: 0.8;
+    }
+
+    /* 规则 */
+    .rule {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* 浮动按钮 */
+    .floating {
+      position: fixed;
+      right: 20px;
+      bottom: 90px;
+      width: 60px;
+      height: 60px;
+      background: #facc15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .floating:active {
+      transform: scale(0.9);
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="header">
+  <div class="logo">
+  <img src="https://your-logo-url.png" />
+</div>
+
+  <div class="game-btn" onclick="goGame()">
+    🎮 进入游戏
+  </div>
+</div>
+
+  <!-- 用户 -->
+  <div class="user-box">
+    👤 用户ID：<span id="userId">---</span><br>
+    🎮 游戏ID：<span id="gameId">未绑定</span>
+  </div>
+
+  <!-- Banner -->
+  <div class="banner">
+    <img src="https://via.placeholder.com/400x150?text=活动Banner">
+  </div>
+
+  <!-- 活动 -->
+  <div class="card">
+    <b>🎁 每日免费领取抽奖码</b>
+
+    <div class="btn" onclick="goGetCode()">
+      👉 获取今日Code
+    </div>
+  </div>
+
+  <!-- 规则 -->
+  <div class="card">
+    <b>📜 活动规则</b>
+
+    <div class="rule">
+      1. 每日可领取一次抽奖码<br>
+      2. 输入Code后可参与抽奖<br>
+      3. 奖励将自动发放到账户<br>
+      4. 严禁作弊，否则封号处理
+    </div>
+  </div>
+
+</div>
+
+<!-- 🎡 浮动按钮 -->
+<div class="floating" onclick="handleSpinClick()">🎡</div>
+
+<script>
+const tg = window.Telegram?.WebApp || {
+  initDataUnsafe: { user: { id: 123456 } },
+  ready: () => {}
+};
+
+tg.ready();
+
+const user = tg.initDataUnsafe.user;
+
+document.getElementById("userId").innerText =
+  user?.id || "未知";
+
+function goGetCode() {
+  alert("👉 请前往Telegram频道获取Code");
+}
+
+// ===== 点击转盘（🔥 修复版）=====
+function handleSpinClick() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+
+  // ❌ 没 token
+  if (!token) {
+    showErrorModal("请先获取抽奖码");
+    return;
+  }
+
+  // ✅ 有 token 才能转
+  openWheel();
+
+  setTimeout(() => {
+    startWheelLottery(token);
+  }, 200);
+}
+
+function goGame() {
+  if (window.Telegram?.WebApp) {
+    Telegram.WebApp.openLink("https://your-game-link.com");
+  } else {
+    window.open("https://your-game-link.com");
+  }
+}
+
+// ===== 自动进入转盘（机器人进入）=====
+window.onload = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+
+  if (!token) return;
+
+  // 自动打开转盘
+  openWheel();
+
+  setTimeout(() => {
+    startWheelLottery(token);
+  }, 500);
+};
+// ❌ 删除你原来的 window.onload
+</script>
+<script src="/wheel.js"></script>
+</body>
+</html>
