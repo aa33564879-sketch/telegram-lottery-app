@@ -209,20 +209,6 @@ function goGame() {
   }
 }
 
-// ===== 自动进入转盘（机器人进入）=====
-window.onload = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("token");
-
-  if (!token) return;
-
-  // 自动打开转盘
-  openWheel();
-
-  setTimeout(() => {
-    startWheelLottery(token);
-  }, 500);
-};
 // ❌ 删除你原来的 window.onload
 </script>
 <script src="/wheel.js"></script>

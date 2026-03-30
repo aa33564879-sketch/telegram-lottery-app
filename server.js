@@ -24,7 +24,7 @@ const supabase = createClient(
 
 // ===== 健康检查（非常重要）=====
 app.get("/", (req, res) => {
-  res.send("✅ Lottery server running");
+  res.redirect("/wheel/?from=home");
 });
 
 // ===== 抽奖接口 =====

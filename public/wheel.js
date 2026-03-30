@@ -18,7 +18,6 @@ function createWheel() {
       <div class="pointer">▼</div>
       <canvas id="wheelCanvas" width="360" height="360"></canvas>
       <div id="wheelResult"></div>
-      <button id="spinBtn">🎰 开始抽奖</button>
     </div>
   `;
 
@@ -269,9 +268,4 @@ console.log("TG USER:", user);
 
 // 🔥 自动执行（关键）
 startWheelLottery(userId);
-
-// 按钮保留（可选）
-document.getElementById("spinBtn").onclick = () => {
-  startWheelLottery(userId);
-};
 };
