@@ -1,19 +1,17 @@
 /* ===== 遮罩层 ===== */
 #wheelModal {
   position: fixed;
-  top: 70px;  
-  left: 0;
-  width: 100%;
-  height: calc(100% - 70px);
-  background: rgba(0,0,0,0.8);
-  display: none;
-  align-items: center;
+  inset: 0;
+
+  display: flex;
+  align-items: flex-start;   /* 🔥 关键：从上开始 */
   justify-content: center;
+
+  padding-top: 120px;        /* 🔥 给 header + 用户区留空间 */
+
+  background: rgba(0,0,0,0.8);
+
   z-index: 999;
-}
-#wheelModal {
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
 }
 
 /* ===== 转盘容器 ===== */
