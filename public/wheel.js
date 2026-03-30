@@ -1,4 +1,4 @@
-let currentToken = null;
+
 // ===== 奖池 =====
 const rewards = [
   "18K","28K","38K","58K",
@@ -127,7 +127,7 @@ function spinWheel(rewardText) {
 }
 
 // ===== 抽奖 =====
-  async function startWheelLottery(token) {
+  async function startWheelLottery(userId) {
   if (spinning) return;
 
   spinning = true;
@@ -141,7 +141,7 @@ function spinWheel(rewardText) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ token })
+      body: JSON.stringify({ user_id: userId })
     });
 
     const data = await res.json();
@@ -254,21 +254,24 @@ function showRewardModal(reward) {
 
 // ===== 页面加载时校验 =====
 window.onload = async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  currentToken = urlParams.get("token");
+    const tg = window.Telegram.WebApp;
+const user = tg.initDataUnsafe.user;
 
-  if (!currentToken) {
-    showErrorModal("请先获取抽奖码");
-    return;
-  }
+if (!user) {
+  showErrorModal("无法获取用户信息");
+  return;
+}
 
+const userId = user.id;
+
+console.log("TG USER:", user);
   openWheel();
 
 // 🔥 自动执行（关键）
-startWheelLottery(currentToken);
+startWheelLottery(userId);
 
 // 按钮保留（可选）
 document.getElementById("spinBtn").onclick = () => {
-  startWheelLottery(currentToken);
+  startWheelLottery(userId);
 };
 };

@@ -32,41 +32,40 @@ app.post("/api/lottery", async (req, res) => {
   try {
     console.log("🎯 API HIT:", req.body);
 
-    const { token } = req.body;
+    const { user_id } = req.body;
 
-    if (!token) {
-      console.log("❌ missing token");
-      return res.json({ success: false, message: "no_token" });
+    if (!user_id) {
+      return res.json({ success: false, message: "no_user" });
     }
 
-    // 1️⃣ 查 token
+    // 1️⃣ 查用户
     const { data, error } = await supabase
-      .from("lottery_tokens")
+      .from("lottery_users")
       .select("*")
-      .eq("token", token)
+      .eq("user_id", user_id)
       .single();
 
     if (error) {
-      console.error("❌ token query error:", error);
+      console.error("❌ user query error:", error);
       return res.json({ success: false, message: "db_error" });
     }
 
     if (!data) {
-      console.log("❌ invalid token");
+      console.log("❌ user not found");
       return res.json({ success: false, message: "invalid" });
     }
 
     // 2️⃣ 防重复
     if (data.used) {
-      console.log("⚠️ token already used");
+      console.log("⚠️ already used");
       return res.json({ success: false, message: "used" });
     }
 
     // 3️⃣ 标记已用
     const { error: updateError } = await supabase
-      .from("lottery_tokens")
+      .from("lottery_users")
       .update({ used: true })
-      .eq("token", token);
+      .eq("user_id", user_id);
 
     if (updateError) {
       console.error("❌ update error:", updateError);
