@@ -8,17 +8,22 @@
 
   <style>
     .header {
-  position: fixed;   /* 🔥 新增 */
-  top: 0;            /* 🔥 新增 */
-  left: 0;           /* 🔥 新增 */
-  width: 100%;       /* 🔥 新增 */
-  z-index: 1000;     /* 🔥 新增 */
+  position: fixed;
+  top: 0;
+
+  width: 100%;
+  max-width: 420px;   /* 🔥 限制手机宽度 */
+  left: 50%;
+  transform: translateX(-50%); /* 🔥 居中 */
+
+  z-index: 1000;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background: #f8fafc; /* 🔥 防止透明 */
+
+  background: #f8fafc;
 }
 
 .logo {
@@ -58,7 +63,7 @@
   border-radius: 20px;             /* 圆角 */
   box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* 阴影 */
 
-  margin: 10px;                    /* 四周留白 */
+  margin: 0 auto;  /* 🔥 居中 */         
   overflow: hidden;                /* 防止溢出 */
 }
 

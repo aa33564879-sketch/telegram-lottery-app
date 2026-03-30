@@ -16,7 +16,7 @@ function createWheel() {
   modal.innerHTML = `
     <div class="wheel-box">
       <div class="pointer">▼</div>
-      <canvas id="wheelCanvas" width="360" height="360"></canvas>
+      <canvas id="wheelCanvas" width="260" height="260"></canvas>
       <div id="wheelResult"></div>
     </div>
   `;
@@ -33,7 +33,7 @@ function drawWheel() {
 
   const size = canvas.width;
   const center = size / 2;
-  const radius = center - 20;
+  const radius = center - 10;
 
   const arc = (2 * Math.PI) / rewards.length;
 
