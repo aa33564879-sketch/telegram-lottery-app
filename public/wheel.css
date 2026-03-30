@@ -54,21 +54,6 @@
 }
 
 /* ===== 按钮 ===== */
-#spinBtn {
-  margin-top: 15px;
-  background: linear-gradient(145deg, #ffd700, #e6b800);
-  border: none;
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-weight: bold;
-  color: #000;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow:
-    0 4px 10px rgba(0,0,0,0.4),
-    inset 0 2px 4px rgba(255,255,255,0.4);
-}
-
 #spinBtn:active {
   transform: scale(0.95);
 }
