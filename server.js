@@ -1,66 +1,53 @@
-const express = require("express");
-const app = express();
+import express from "express";
+import { createClient } from "@supabase/supabase-js";
 
+const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
-/* =========================
-   🎰 抽奖接口（接机器人）
-========================= */
-app.post("/api/lottery", (req, res) => {
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+app.post("/api/lottery", async (req, res) => {
   const { token } = req.body;
 
-  // ❌ 没 token（非法进入）
   if (!token) {
-    return res.json({
-      success: false,
-      message: "no_token"
-    });
+    return res.json({ success: false });
   }
 
-  // =====================================
-  // 👉 这里未来接你的机器人系统
-  // =====================================
-  // 现在先写死测试数据
+  const { data, error } = await supabase
+    .from("lottery_tokens")
+    .select("*")
+    .eq("token", token)
+    .single();
 
-  const fakeDB = {
-    "abc123": { reward: "88K", used: false },
-    "test888": { reward: "188K", used: false }
-  };
+  if (error) {
+    console.error("❌ token query error:", error);
+  }
 
-  const data = fakeDB[token];
-
-  // ❌ token不存在
   if (!data) {
-    return res.json({
-      success: false,
-      message: "invalid"
-    });
+    return res.json({ success: false, message: "invalid" });
   }
 
-  // ❌ 已使用
   if (data.used) {
-    return res.json({
-      success: false,
-      message: "used"
-    });
+    return res.json({ success: false, message: "used" });
   }
 
-  // 👉 标记已用（真实要写数据库）
-  data.used = true;
+  await supabase
+    .from("lottery_tokens")
+    .update({ used: true })
+    .eq("token", token);
 
-  // ✅ 返回中奖结果（机器人已经决定）
   return res.json({
     success: true,
     reward: data.reward
   });
 });
 
-/* =========================
-   🚀 启动服务
-========================= */
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("🚀 Server running on port", PORT);
+  console.log("🚀 server running on", PORT);
 });
