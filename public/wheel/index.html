@@ -8,10 +8,17 @@
 
   <style>
     .header {
+  position: fixed;   /* 🔥 新增 */
+  top: 0;            /* 🔥 新增 */
+  left: 0;           /* 🔥 新增 */
+  width: 100%;       /* 🔥 新增 */
+  z-index: 1000;     /* 🔥 新增 */
+
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px;
+  background: #f8fafc; /* 🔥 防止透明 */
 }
 
 .logo {
@@ -42,6 +49,7 @@
 }
 
     .app {
+  padding-top: 70px; /* 🔥 新增 */
   width: 100%;
   max-width: 420px;
   min-height: 100vh;
