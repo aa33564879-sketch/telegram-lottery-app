@@ -147,11 +147,16 @@ function spinWheel(rewardText) {
 
     const data = await res.json();
 
-    if (!data.success) {
-      resultEl.innerText = "❌ 无效";
-      spinning = false;
-      return;
-    }
+   if (!data.success) {
+  if (data.message === "used") {
+    showErrorModal("该抽奖码已使用");
+  } else {
+    showErrorModal("无效抽奖码");
+  }
+
+  spinning = false;
+  return;
+}
 
     await spinWheel(data.reward);
 
@@ -254,31 +259,7 @@ window.onload = async () => {
   showErrorModal("请先获取抽奖码");
   return;
 }
-
-  try {
-    const res = await fetch("/api/checkToken", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ token })
-    });
-
-    const data = await res.json();
-
-    if (!data.success) {
-  showErrorModal("验证失败，请重新获取Code");
-  return;
-}
-
-    // ✅ 允许抽奖
-    openWheel();
-
-    setTimeout(() => {
-      startWheelLottery(token);
-    }, 500);
-
- } catch {
-  showErrorModal("网络错误");
-}
+// 直接转
+openWheel();
+startWheelLottery(token);
 };

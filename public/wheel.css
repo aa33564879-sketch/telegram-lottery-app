@@ -86,11 +86,15 @@
 
 /* ===== 弹窗盒子 ===== */
 .reward-box {
-  width: 280px;
+  width: 300px;
+  padding: 25px;
+  border-radius: 20px;
   background: linear-gradient(180deg, #111, #000);
   border-radius: 16px;
   padding: 20px;
   text-align: center;
+  animation: popIn 0.3s ease;
+  transform: scale(1);
 
   border: 2px solid #ffd700;
   box-shadow: 0 0 20px rgba(255,215,0,0.6);
@@ -98,19 +102,20 @@
 
 /* 标题 */
 .reward-title {
-  font-size: 20px;
+  font-size: 22px;
   color: #ffd700;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 10px #ffd700;
 }
 
 /* 金额 */
 .reward-amount {
-  font-size: 32px;
+  font-size: 36px;
   color: #ffd700;
   font-weight: bold;
-  margin: 15px 0;
-  text-shadow: 0 0 10px #ffd700;
+  margin: 20px 0;
+  text-shadow: 0 0 20px #ffd700;
 }
 
 /* 描述 */
@@ -122,12 +127,13 @@
 
 /* 按钮 */
 .reward-btn {
-  background: linear-gradient(145deg, #ffd700, #e6b800);
+  background: linear-gradient(145deg, #ffd700, #ffcc00);
   border: none;
-  padding: 10px 30px;
-  border-radius: 25px;
+  padding: 12px 40px;
+  border-radius: 30px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 16px;
 }
 
 /* ===== 错误弹窗遮罩 ===== */
@@ -148,15 +154,12 @@
 
 /* ===== 弹窗盒子 ===== */
 .error-box {
-  width: 260px;
+  width: 280px;
+  padding: 25px;
+  border-radius: 20px;
   background: linear-gradient(180deg, #111, #000);
-  border-radius: 16px;
-  padding: 20px;
-  text-align: center;
-
-  border: 2px solid #ffd700;
-  box-shadow: 0 0 20px rgba(255,215,0,0.6);
-
+  border: 2px solid #ff3b30;
+  box-shadow: 0 0 20px rgba(255,59,48,0.6);
   animation: popIn 0.3s ease;
 }
 

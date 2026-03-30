@@ -1,68 +1,64 @@
 const express = require("express");
-const crypto = require("crypto");
-
 const app = express();
-app.use(express.json());
 
-// 静态文件
+app.use(express.json());
 app.use(express.static("public"));
 
-// ===== 验证 Telegram =====
-function validateTelegramData(initData, botToken) {
-  try {
-    const params = new URLSearchParams(initData);
-    const hash = params.get("hash");
-    params.delete("hash");
-
-    const dataCheckString = [...params.entries()]
-      .sort()
-      .map(([key, value]) => `${key}=${value}`)
-      .join("\n");
-
-    const secretKey = crypto
-      .createHmac("sha256", "WebAppData")
-      .update(botToken)
-      .digest();
-
-    const hmac = crypto
-      .createHmac("sha256", secretKey)
-      .update(dataCheckString)
-      .digest("hex");
-
-    return hmac === hash;
-  } catch {
-    return false;
-  }
-}
-
-// ===== 抽奖接口 =====
+/* =========================
+   🎰 抽奖接口（接机器人）
+========================= */
 app.post("/api/lottery", (req, res) => {
-  const { initData } = req.body;
+  const { token } = req.body;
 
-  const BOT_TOKEN = process.env.BOT_TOKEN || "YOUR_BOT_TOKEN";
-
-  const isValid = validateTelegramData(initData, BOT_TOKEN);
-
-  if (!isValid) {
+  // ❌ 没 token（非法进入）
+  if (!token) {
     return res.json({
       success: false,
-      message: "invalid_user"
+      message: "no_token"
     });
   }
 
-  const params = new URLSearchParams(initData);
-  const user = JSON.parse(params.get("user"));
+  // =====================================
+  // 👉 这里未来接你的机器人系统
+  // =====================================
+  // 现在先写死测试数据
 
-  const reward = Math.random() < 0.5 ? 100 : 0;
+  const fakeDB = {
+    "abc123": { reward: "88K", used: false },
+    "test888": { reward: "188K", used: false }
+  };
 
-  res.json({
+  const data = fakeDB[token];
+
+  // ❌ token不存在
+  if (!data) {
+    return res.json({
+      success: false,
+      message: "invalid"
+    });
+  }
+
+  // ❌ 已使用
+  if (data.used) {
+    return res.json({
+      success: false,
+      message: "used"
+    });
+  }
+
+  // 👉 标记已用（真实要写数据库）
+  data.used = true;
+
+  // ✅ 返回中奖结果（机器人已经决定）
+  return res.json({
     success: true,
-    reward,
-    user_id: user.id
+    reward: data.reward
   });
 });
 
-// ===== 启动 =====
+/* =========================
+   🚀 启动服务
+========================= */
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

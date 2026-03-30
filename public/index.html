@@ -198,21 +198,7 @@ function goGetCode() {
 
 // ===== 点击转盘（🔥 修复版）=====
 function handleSpinClick() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("token");
-
-  // ❌ 没 token
-  if (!token) {
-    showErrorModal("请先获取抽奖码");
-    return;
-  }
-
-  // ✅ 有 token 才能转
-  openWheel();
-
-  setTimeout(() => {
-    startWheelLottery(token);
-  }, 200);
+  showErrorModal("👉 请在Telegram机器人中获取抽奖资格");
 }
 
 function goGame() {
