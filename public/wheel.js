@@ -14,19 +14,25 @@ function createWheel() {
   modal.id = "wheelModal";
 
   modal.innerHTML = `
-  <div class="wheel-box">
-    <div class="close-btn" id="closeWheel">✖</div>
-    <div class="pointer">▼</div>
-    <canvas id="wheelCanvas" width="260" height="260"></canvas>
-    <div id="wheelResult"></div>
-  </div>
-`;
+    <div class="wheel-box">
+      <div class="close-btn" id="closeWheel">✖</div>
+      <div class="pointer">▼</div>
+      <canvas id="wheelCanvas" width="260" height="260"></canvas>
+      <div id="wheelResult"></div>
+    </div>
+  `;
 
   document.body.appendChild(modal);
+
   const closeBtn = document.getElementById("closeWheel");
-  document.getElementById("closeWheel").onclick = () => {
-  document.getElementById("wheelModal").style.display = "none";
-};
+
+  // ✅ 初始可关闭
+  closeBtn.style.opacity = "1";
+  closeBtn.style.pointerEvents = "auto";
+
+  closeBtn.onclick = () => {
+    document.getElementById("wheelModal").style.display = "none";
+  };
 
   drawWheel();
 }
@@ -136,6 +142,12 @@ function spinWheel(rewardText) {
 
   spinning = true;
 
+  const closeBtn = document.getElementById("closeWheel");
+
+  // 🔒 锁定关闭按钮
+  closeBtn.style.opacity = "0.5";
+  closeBtn.style.pointerEvents = "none";
+
   const resultEl = document.getElementById("wheelResult");
   resultEl.innerText = "⏳ Đang quay thưởng...";
 
@@ -150,32 +162,44 @@ function spinWheel(rewardText) {
 
     const data = await res.json();
 
-   if (!data.success) {
-  if (data.message === "used") {
-    showErrorModal("⭐ Vào bot nhập CODE để quay thưởng ⭐");
-  } else {
-    showErrorModal("Mã CODE sai");
-  }
+    // ❌ 失败情况
+    if (!data.success) {
+      if (data.message === "used") {
+        showErrorModal("⭐ Vào bot nhập CODE để quay thưởng ⭐");
+      } else {
+        showErrorModal("Mã CODE sai");
+      }
 
-  spinning = false;
-  return;
-}
+      // 🔓 解锁按钮（关键）
+      closeBtn.style.opacity = "1";
+      closeBtn.style.pointerEvents = "auto";
 
-    const rewardFull = data.reward;       // 88000
-const rewardK = rewardFull / 1000;    // 88
+      spinning = false;
+      return;
+    }
 
-await spinWheel(rewardK + "K");
+    const rewardFull = data.reward;
+    const rewardK = rewardFull / 1000;
 
-resultEl.innerText = "🎉 Bạn đã trúng：" + rewardFull;
-document.getElementById("closeWheel").style.display = "flex";
+    await spinWheel(rewardK + "K");
 
-    // 🔥 弹窗
+    // 🔓 恢复按钮
+    closeBtn.style.opacity = "1";
+    closeBtn.style.pointerEvents = "auto";
+
+    resultEl.innerText = "🎉 Bạn đã trúng：" + rewardFull;
+
+    // 弹中奖弹窗
     setTimeout(() => {
       showRewardModal(data.reward);
     }, 500);
 
-  } catch {
+  } catch (err) {
     resultEl.innerText = "❌ Lỗi mạng";
+
+    // 🔓 解锁按钮（必须）
+    closeBtn.style.opacity = "1";
+    closeBtn.style.pointerEvents = "auto";
   }
 
   spinning = false;
