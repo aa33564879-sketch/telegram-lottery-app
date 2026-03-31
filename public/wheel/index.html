@@ -3,7 +3,7 @@
 <head>
     <link rel="stylesheet" href="/wheel.css">
   <meta charset="UTF-8" />
-  <title>G168 活动</title>
+  <title>G168 vòng quay may mắn</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
@@ -11,13 +11,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 8px 12px;   /* 🔥 减小内边距 */
 }
 
 .logo {
-  font-size: 22px;
+  font-size: 0px;
   font-weight: bold;
   color: #facc15;
+}
+
+.logo img {
+  height: 60px;
 }
 
 .game-btn {
@@ -94,7 +98,15 @@
       margin-top: 10px;
       font-weight: bold;
     }
+      .btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
 
+.btn-group .btn {
+  flex: 1;
+}
     .btn:active {
       opacity: 0.8;
     }
@@ -126,6 +138,30 @@
     .floating:active {
       transform: scale(0.9);
     }
+
+    .error-close {
+  position: absolute;   /* 🔥 改回这个 */
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  color: #ff3b30;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.error-box {
+  position: relative;   /* 🔥 关键！！ */
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.error-text {
+  margin: 15px 0;
+}
   </style>
 </head>
 
@@ -138,42 +174,60 @@
 </div>
 
   <div class="game-btn" onclick="goGame()">
-    🎮 进入游戏
+    🎮 Vào Game
   </div>
 </div>
 
   <!-- 用户 -->
   <div class="user-box">
-    👤 用户ID：<span id="userId">---</span><br>
-    🎮 游戏ID：<span id="gameId">未绑定</span>
+    👤 UserID：<span id="userId">---</span><br>
+    🎮 GameID：<span id="gameId">Chưa liên kết</span>
   </div>
 
   <!-- Banner -->
   <div class="banner">
-    <img src="https://via.placeholder.com/400x150?text=活动Banner">
+    <img src="https://plojqbuetcylchvyezqp.supabase.co/storage/v1/object/public/emoji-previews/g168zhuanpan.webp">
   </div>
 
   <!-- 活动 -->
   <div class="card">
-    <b>🎁 每日免费领取抽奖码</b>
+  <b>🎁 Nhận mã CODE</b>
+
+  <!-- 👇 新增一层 -->
+  <div class="btn-group">
+    <div class="btn" onclick="goGetCode()">
+      Theo dõi kênh
+    </div>
 
     <div class="btn" onclick="goGetCode()">
-      👉 获取今日Code
+      Liên hệ CSKH
     </div>
   </div>
+</div>
 
   <!-- 规则 -->
   <div class="card">
-    <b>📜 活动规则</b>
+    <b>🎁 Cách nhận CODE G168</b>
 
     <div class="rule">
-      1. 每日可领取一次抽奖码<br>
-      2. 输入Code后可参与抽奖<br>
-      3. 奖励将自动发放到账户<br>
-      4. 严禁作弊，否则封号处理
+      1. G168 thường xuyên tổ chức sự kiện tặng CODE miễn phí cho người chơi<br>
+      2. Mỗi CODE sẽ có điều kiện sử dụng riêng, được công bố rõ trong từng chương trình<br>
+      3. Theo dõi kênh ngay để cập nhật sự kiện mới và nhận CODE nhanh nhất
     </div>
   </div>
+<div class="card">
+    <b>📜 Cách sử dụng CODE</b>
 
+    <div class="rule">
+      1. Theo dõi bot @g168vnbot để bắt đầu<br>
+      2. Nhấn vào nút Nhập CODE<br>
+      3. Nhập mã theo hướng dẫn để tham gia vòng quay may mắn<br>
+      4. Hệ thống tự động kiểm tra và cộng thưởng vào tài khoản<br>
+      5. Thời gian xử lý nhanh chóng chỉ từ 1–3 phút<br>
+      6. Nghiêm cấm mọi hành vi gian lận, vi phạm sẽ bị khóa tài khoản vĩnh viễn
+      Lưu ý quan trọng：G168 có quyền quyết định cuối cùng đối với mọi chương trình và phần thưởng
+    </div>
+  </div>
 </div>
 
 <!-- 🎡 浮动按钮 -->
@@ -190,15 +244,15 @@ tg.ready();
 const user = tg.initDataUnsafe.user;
 
 document.getElementById("userId").innerText =
-  user?.id || "未知";
+  user?.id || "Không rõ";
 
 function goGetCode() {
-  alert("👉 请前往Telegram频道获取Code");
+  alert("⭐ Vào bot nhập CODE để quay thưởng ⭐");
 }
 
 // ===== 点击转盘（🔥 修复版）=====
 function handleSpinClick() {
-  showErrorModal("👉 请在Telegram机器人中获取抽奖资格");
+  showErrorModal("👉 Vào bot nhập CODE để quay thưởng");
 }
 
 function goGame() {

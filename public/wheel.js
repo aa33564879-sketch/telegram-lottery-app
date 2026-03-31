@@ -190,28 +190,26 @@ function showErrorModal(msg) {
     modal.id = "errorModal";
 
     modal.innerHTML = `
-      <div class="error-mask">
-        <div class="error-box">
-
+      <div class="error-mask" onclick="closeErrorModal()">
+        <div class="error-box" onclick="event.stopPropagation()">
+       <div class="error-close" onclick="closeErrorModal()">✖</div>
           <div class="error-icon">❌</div>
-
           <div class="error-text">${msg}</div>
-
-          <button class="error-btn">确定</button>
-
+          <button class="modal-btn" onclick="goBot(); closeErrorModal()">Nhập CODE</button>
         </div>
       </div>
     `;
 
     document.body.appendChild(modal);
-
-    modal.querySelector(".error-btn").onclick = () => {
-      modal.style.display = "none";
-    };
   }
 
   modal.querySelector(".error-text").innerText = msg;
   modal.style.display = "block";
+}
+
+function closeErrorModal() {
+  const modal = document.getElementById("errorModal");
+  if (modal) modal.style.display = "none";
 }
 
 // ===== 中奖弹窗 =====
@@ -226,16 +224,16 @@ function showRewardModal(reward) {
       <div class="reward-mask">
         <div class="reward-box">
 
-          <div class="reward-title">🎉 恭喜中奖</div>
+          <div class="reward-title">🎉 Bạn đã trúng</div>
 
           <div class="reward-amount">${reward}</div>
 
           <div class="reward-desc">
-            奖励已发放至您的账户<br/>
-            请前往游戏内查看
+            Đang chờ duyệt<br/>
+            ⭐ Vui lòng theo dõi tin nhắn từ bot ⭐
           </div>
 
-          <button class="reward-btn">确定</button>
+          <button class="modal-btn">Xác nhận</button>
 
         </div>
       </div>
@@ -244,9 +242,9 @@ function showRewardModal(reward) {
     document.body.appendChild(modal);
 
     // 关闭按钮
-    modal.querySelector(".reward-btn").onclick = () => {
-      modal.style.display = "none";
-    };
+    modal.querySelector(".modal-btn").onclick = () => {
+  modal.style.display = "none";
+};
   }
 
   // 更新金额
@@ -277,3 +275,13 @@ window.onload = async () => {
   // 🔥 再抽奖
   startWheelLottery(userId);
 };
+
+function goBot() {
+  const botLink = "https://t.me/g168vnbot";  // 👈 改成你的机器人
+
+  if (window.Telegram?.WebApp) {
+    Telegram.WebApp.openTelegramLink(botLink);
+  } else {
+    window.open(botLink);
+  }
+}

@@ -139,7 +139,7 @@
 }
 
 /* 按钮 */
-.reward-btn {
+.modal-btn {
   background: linear-gradient(145deg, #ffd700, #ffcc00);
   border: none;
   padding: 12px 40px;
@@ -190,13 +190,20 @@
 }
 
 /* 按钮 */
-.error-btn {
-  background: linear-gradient(145deg, #ffd700, #e6b800);
+.modal-btn {
+  background: linear-gradient(145deg, #ffd700, #ffcc00);
   border: none;
-  padding: 10px 30px;
+  padding: 12px 30px;
   border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 15px;
+  color: #000;
+  margin-top: 15px;
+}
+
+.modal-btn:active {
+  transform: scale(0.95);
 }
 
 /* 动画 */
