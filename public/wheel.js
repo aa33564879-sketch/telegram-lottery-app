@@ -137,7 +137,7 @@ function spinWheel(rewardText) {
   spinning = true;
 
   const resultEl = document.getElementById("wheelResult");
-  resultEl.innerText = "⏳ 抽奖中...";
+  resultEl.innerText = "⏳ Đang quay thưởng...";
 
   try {
     const res = await fetch("https://g168code.site/api/lottery", {
@@ -152,9 +152,9 @@ function spinWheel(rewardText) {
 
    if (!data.success) {
   if (data.message === "used") {
-    showErrorModal("该抽奖码已使用");
+    showErrorModal("⭐ Vào bot nhập CODE để quay thưởng ⭐");
   } else {
-    showErrorModal("无效抽奖码");
+    showErrorModal("Mã CODE sai");
   }
 
   spinning = false;
@@ -166,7 +166,7 @@ const rewardK = rewardFull / 1000;    // 88
 
 await spinWheel(rewardK + "K");
 
-resultEl.innerText = "🎉 恭喜中奖：" + rewardFull;
+resultEl.innerText = "🎉 Bạn đã trúng：" + rewardFull;
 document.getElementById("closeWheel").style.display = "flex";
 
     // 🔥 弹窗
@@ -175,7 +175,7 @@ document.getElementById("closeWheel").style.display = "flex";
     }, 500);
 
   } catch {
-    resultEl.innerText = "❌ 网络错误";
+    resultEl.innerText = "❌ Lỗi mạng";
   }
 
   spinning = false;
