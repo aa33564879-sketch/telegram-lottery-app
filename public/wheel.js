@@ -23,6 +23,7 @@ function createWheel() {
 `;
 
   document.body.appendChild(modal);
+  const closeBtn = document.getElementById("closeWheel");
   document.getElementById("closeWheel").onclick = () => {
   document.getElementById("wheelModal").style.display = "none";
 };
@@ -259,29 +260,18 @@ window.onload = async () => {
   const tg = window.Telegram?.WebApp;
   const user = tg?.initDataUnsafe?.user;
 
-  const userId = user?.id;
+  // ❌ 没用户 → 不创建转盘（页面就是普通落地页）
+  if (!user) {
+    console.log("❌ 非抽奖入口，不创建转盘");
+    return;
+  }
 
-if (!userId) return;
+  const userId = user.id;
 
-// 🔥 查询有没有抽奖资格
-const res = await fetch("https://g168code.site/api/check", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ user_id: userId })
-});
-
-const data = await res.json();
-
-// ❌ 没资格 → 不创建转盘
-if (!data.success) {
-  console.log("❌ 没抽奖资格");
-  return;
-}
+  console.log("✅ 合法用户，创建转盘");
 
   // 🔥 关键：这里才创建
-  if (!document.getElementById("wheelModal")) {
   createWheel();
-}
   // 🔥 再打开
   openWheel();
   // 🔥 再抽奖
