@@ -15,7 +15,7 @@ function createWheel() {
 
   modal.innerHTML = `
   <div class="wheel-box">
-    <div class="close-btn" id="closeWheel" style="display:none;">✖</div>
+    <div class="close-btn" id="closeWheel">✖</div>
     <div class="pointer">▼</div>
     <canvas id="wheelCanvas" width="260" height="260"></canvas>
     <div id="wheelResult"></div>
