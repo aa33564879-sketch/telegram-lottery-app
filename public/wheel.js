@@ -14,14 +14,18 @@ function createWheel() {
   modal.id = "wheelModal";
 
   modal.innerHTML = `
-    <div class="wheel-box">
-      <div class="pointer">▼</div>
-      <canvas id="wheelCanvas" width="260" height="260"></canvas>
-      <div id="wheelResult"></div>
-    </div>
-  `;
+  <div class="wheel-box">
+    <div class="close-btn" id="closeWheel" style="display:none;">✖</div>
+    <div class="pointer">▼</div>
+    <canvas id="wheelCanvas" width="260" height="260"></canvas>
+    <div id="wheelResult"></div>
+  </div>
+`;
 
   document.body.appendChild(modal);
+  document.getElementById("closeWheel").onclick = () => {
+  document.getElementById("wheelModal").style.display = "none";
+};
 
   drawWheel();
 }
@@ -162,6 +166,7 @@ const rewardK = rewardFull / 1000;    // 88
 await spinWheel(rewardK + "K");
 
 resultEl.innerText = "🎉 恭喜中奖：" + rewardFull;
+document.getElementById("closeWheel").style.display = "flex";
 
     // 🔥 弹窗
     setTimeout(() => {
@@ -207,8 +212,6 @@ function showErrorModal(msg) {
   modal.querySelector(".error-text").innerText = msg;
   modal.style.display = "block";
 }
-// ===== 初始化 =====
-createWheel();
 
 // ===== 中奖弹窗 =====
 function showRewardModal(reward) {
@@ -253,19 +256,34 @@ function showRewardModal(reward) {
 
 // ===== 页面加载时校验 =====
 window.onload = async () => {
-    const tg = window.Telegram.WebApp;
-const user = tg.initDataUnsafe.user;
+  const tg = window.Telegram?.WebApp;
+  const user = tg?.initDataUnsafe?.user;
 
-if (!user) {
-  showErrorModal("无法获取用户信息");
+  const userId = user?.id;
+
+if (!userId) return;
+
+// 🔥 查询有没有抽奖资格
+const res = await fetch("https://g168code.site/api/check", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ user_id: userId })
+});
+
+const data = await res.json();
+
+// ❌ 没资格 → 不创建转盘
+if (!data.success) {
+  console.log("❌ 没抽奖资格");
   return;
 }
 
-const userId = user.id;
-
-console.log("TG USER:", user);
+  // 🔥 关键：这里才创建
+  if (!document.getElementById("wheelModal")) {
+  createWheel();
+}
+  // 🔥 再打开
   openWheel();
-
-// 🔥 自动执行（关键）
-startWheelLottery(userId);
+  // 🔥 再抽奖
+  startWheelLottery(userId);
 };
