@@ -245,6 +245,7 @@ const user = tg.initDataUnsafe.user;
 
 const urlParams = new URLSearchParams(window.location.search);
 const botId = urlParams.get("bot_id");
+const activityId = urlParams.get("activity_id");
 
 document.getElementById("userId").innerText =
   user?.id || "Không rõ";

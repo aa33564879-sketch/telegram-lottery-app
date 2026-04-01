@@ -62,7 +62,8 @@ app.post("/api/lottery", async (req, res) => {
   try {
     console.log("🎯 API HIT:", req.body);
 
-    const { user_id, bot_id } = req.body;
+    const { user_id, bot_id, activity_id } = req.body;
+    
     if (!bot_id) {
   return res.json({ success: false, message: "no_bot" });
 }
@@ -70,14 +71,21 @@ app.post("/api/lottery", async (req, res) => {
     if (!user_id) {
       return res.json({ success: false, message: "no_user" });
     }
+    
+     if (!activity_id) {
+  return res.json({ success: false, message: "no_activity" });
+}
 
     // 1️⃣ 查用户
     const { data, error } = await supabase
-      .from("lottery_users")
-      .select("*")
-      .eq("user_id", user_id)
-      .eq("bot_id", bot_id)
-      .maybeSingle();
+  .from("lottery_users")
+  .select("*")
+  .eq("user_id", user_id)
+  .eq("bot_id", bot_id)
+  .eq("used", false)
+  .order("created_at", { ascending: false })
+  .limit(1)
+  .maybeSingle();
 
     if (error) {
       console.error("❌ user query error:", error);
@@ -85,22 +93,22 @@ app.post("/api/lottery", async (req, res) => {
     }
 
     if (!data) {
-      console.log("❌ user not found");
-      return res.json({ success: false, message: "invalid" });
-    }
-
-    // 2️⃣ 防重复
-    if (data.used) {
-      console.log("⚠️ already used");
-      return res.json({ success: false, message: "used" });
-    }
+  return res.json({ success: false, message: "no_chance" });
+}
 
     // 3️⃣ 标记已用
-    const { error: updateError } = await supabase
-      .from("lottery_users")
-      .update({ used: true })
-      .eq("user_id", user_id)
-      .eq("bot_id", bot_id); 
+    const { data: updated, error: updateError } = await supabase
+  .from("lottery_users")
+  .update({ used: true })
+  .eq("id", data.id)
+  .eq("used", false)
+  .eq("bot_id", bot_id)
+  .select()
+  .maybeSingle();
+
+  if (!updated) {
+  return res.json({ success: false, message: "used" });
+}
 
     if (updateError) {
       console.error("❌ update error:", updateError);
@@ -108,6 +116,31 @@ app.post("/api/lottery", async (req, res) => {
     }
 
     console.log("🎉 reward:", data.reward);
+
+   const { data: exists } = await supabase
+  .from("activity_participations")
+  .select("id")
+  .eq("platform_user_id", user_id)
+  .eq("activity_id", activity_id)
+  .eq("bot_id", bot_id)
+  .eq("status", "pending")
+  .maybeSingle();
+
+if (!exists) {
+  const { error: insertError } = await supabase
+    .from("activity_participations")
+    .insert({
+      bot_id,
+      activity_id,
+      platform: "telegram",
+      platform_user_id: user_id,
+      status: "pending"
+    });
+
+  if (insertError) {
+    console.error("❌ participation insert error:", insertError);
+  }
+}
 
     // 4️⃣ 返回结果
     return res.json({
