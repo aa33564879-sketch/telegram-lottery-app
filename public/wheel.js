@@ -139,6 +139,7 @@ function spinWheel(rewardText) {
 // ===== 抽奖 =====
 const params = new URLSearchParams(window.location.search);
 
+const userId = params.get("user_id");
 const botId = params.get("bot_id");
 const activityId = params.get("activity_id");
 
@@ -284,16 +285,11 @@ function showRewardModal(reward) {
 
 // ===== 页面加载时校验 =====
 window.onload = async () => {
-  const tg = window.Telegram?.WebApp;
-  const user = tg?.initDataUnsafe?.user;
-
-  // ❌ 没用户 → 不创建转盘（页面就是普通落地页）
-  if (!user) {
-    console.log("❌ 非抽奖入口，不创建转盘");
-    return;
-  }
-
-  const userId = user.id;
+  
+if (!userId) {
+  console.log("❌ 缺少 user_id");
+  return;
+}
 
   console.log("✅ 合法用户，创建转盘");
 
