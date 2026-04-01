@@ -39,7 +39,7 @@ app.get("/api/user/:id", async (req, res) => {
     const { data, error } = await supabase
       .from("users")
       .select("game_id")
-      .eq("user_id", id)
+      .eq("platform_user_id", id)
       .eq("bot_id", bot_id)   // 🔥 动态
       .maybeSingle();
 
