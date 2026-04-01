@@ -27,12 +27,45 @@ app.get("/", (req, res) => {
   res.redirect("/wheel/?from=home");
 });
 
+// ===== 获取用户信息（🔥 新增）=====
+app.get("/api/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { bot_id } = req.query; 
+    if (!bot_id) {
+  return res.json({ game_id: null });
+}  // 🔥 新增
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("game_id")
+      .eq("user_id", id)
+      .eq("bot_id", bot_id)   // 🔥 动态
+      .maybeSingle();
+
+    if (error) {
+      return res.json({ game_id: null });
+    }
+
+    return res.json({
+      game_id: data?.game_id || null
+    });
+
+  } catch (err) {
+    console.error("user api error:", err);
+    res.json({ game_id: null });
+  }
+});
+
 // ===== 抽奖接口 =====
 app.post("/api/lottery", async (req, res) => {
   try {
     console.log("🎯 API HIT:", req.body);
 
-    const { user_id } = req.body;
+    const { user_id, bot_id } = req.body;
+    if (!bot_id) {
+  return res.json({ success: false, message: "no_bot" });
+}
 
     if (!user_id) {
       return res.json({ success: false, message: "no_user" });
@@ -43,7 +76,8 @@ app.post("/api/lottery", async (req, res) => {
       .from("lottery_users")
       .select("*")
       .eq("user_id", user_id)
-      .single();
+      .eq("bot_id", bot_id)
+      .maybeSingle();
 
     if (error) {
       console.error("❌ user query error:", error);
@@ -65,7 +99,8 @@ app.post("/api/lottery", async (req, res) => {
     const { error: updateError } = await supabase
       .from("lottery_users")
       .update({ used: true })
-      .eq("user_id", user_id);
+      .eq("user_id", user_id)
+      .eq("bot_id", bot_id); 
 
     if (updateError) {
       console.error("❌ update error:", updateError);

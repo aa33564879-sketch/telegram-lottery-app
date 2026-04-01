@@ -243,8 +243,32 @@ tg.ready();
 
 const user = tg.initDataUnsafe.user;
 
+const urlParams = new URLSearchParams(window.location.search);
+const botId = urlParams.get("bot_id");
+
 document.getElementById("userId").innerText =
   user?.id || "Không rõ";
+
+  // ===== 🔥 新增：加载 game_id =====
+async function loadGameId() {
+  if (!user?.id) return;
+
+  try {
+    const res = await fetch(`/api/user/${user.id}?bot_id=${botId}`);
+    const data = await res.json();
+
+    document.getElementById("gameId").innerText =
+      data.game_id || "Chưa liên kết";
+
+  } catch (e) {
+    console.error("load gameId error", e);
+  }
+}
+
+// 页面加载执行
+loadGameId();
+
+window.addEventListener("focus", loadGameId);
 
 function goGetCode() {
   alert("⭐ Vào bot nhập CODE để quay thưởng ⭐");

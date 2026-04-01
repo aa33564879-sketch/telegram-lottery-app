@@ -157,7 +157,7 @@ function spinWheel(rewardText) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ user_id: userId })
+      body: JSON.stringify({ user_id: userId, bot_id: botId  })
     });
 
     const data = await res.json();
