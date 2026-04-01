@@ -140,14 +140,13 @@ function spinWheel(rewardText) {
 const params = new URLSearchParams(window.location.search);
 
 let userId = params.get("user_id");
-
-if (!userId && window.Telegram?.WebApp) {
-  userId = Telegram.WebApp.initDataUnsafe?.user?.id?.toString();
-}
 const botId = params.get("bot_id");
 const activityId = params.get("activity_id");
 
 console.log("userId:", userId);
+if (!userId) {
+  alert("❌ user_id 丢失");
+}
 console.log("botId:", botId);
 console.log("activityId:", activityId);
 console.log("tg user:", window.Telegram?.WebApp?.initDataUnsafe);
