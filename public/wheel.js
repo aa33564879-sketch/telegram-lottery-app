@@ -137,6 +137,11 @@ function spinWheel(rewardText) {
 }
 
 // ===== 抽奖 =====
+const params = new URLSearchParams(window.location.search);
+
+const botId = params.get("bot_id");
+const activityId = params.get("activity_id");
+
   async function startWheelLottery(userId) {
   if (spinning) return;
 
