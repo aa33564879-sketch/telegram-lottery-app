@@ -139,14 +139,32 @@ function spinWheel(rewardText) {
 // ===== 抽奖 =====
 const params = new URLSearchParams(window.location.search);
 
-let userId = params.get("user_id");
+window.onload = async () => {
+
+  if (window.Telegram?.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+  }
+
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const userId = tgUser?.id?.toString();
+
+  if (!userId) {
+    console.log("❌ Telegram user 丢失");
+    alert("❌ 无法获取 Telegram 用户");
+    return;
+  }
+
+  console.log("✅ 用户:", userId);
+
+  createWheel();
+  openWheel();
+  startWheelLottery(userId);
+};
+
 const botId = params.get("bot_id");
 const activityId = params.get("activity_id");
 
-console.log("userId:", userId);
-if (!userId) {
-  alert("❌ user_id 丢失");
-}
 console.log("botId:", botId);
 console.log("activityId:", activityId);
 console.log("tg user:", window.Telegram?.WebApp?.initDataUnsafe);
@@ -292,23 +310,6 @@ function showRewardModal(reward) {
 }
 
 // ===== 页面加载时校验 =====
-window.onload = async () => {
-  
-if (!userId) {
-  console.log("❌ 缺少 user_id");
-  return;
-}
-
-  console.log("✅ 合法用户，创建转盘");
-
-  // 🔥 关键：这里才创建
-  createWheel();
-  // 🔥 再打开
-  openWheel();
-  // 🔥 再抽奖
-  startWheelLottery(userId);
-};
-
 function goBot() {
   const botLink = "https://t.me/g168vnbot";  // 👈 改成你的机器人
 
