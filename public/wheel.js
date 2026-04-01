@@ -139,9 +139,18 @@ function spinWheel(rewardText) {
 // ===== 抽奖 =====
 const params = new URLSearchParams(window.location.search);
 
-const userId = params.get("user_id");
+let userId = params.get("user_id");
+
+if (!userId && window.Telegram?.WebApp) {
+  userId = Telegram.WebApp.initDataUnsafe?.user?.id?.toString();
+}
 const botId = params.get("bot_id");
 const activityId = params.get("activity_id");
+
+console.log("userId:", userId);
+console.log("botId:", botId);
+console.log("activityId:", activityId);
+console.log("tg user:", window.Telegram?.WebApp?.initDataUnsafe);
 
   async function startWheelLottery(userId) {
   if (spinning) return;
