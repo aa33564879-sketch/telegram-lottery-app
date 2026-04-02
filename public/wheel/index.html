@@ -233,6 +233,8 @@
 <!-- 🎡 浮动按钮 -->
 <div class="floating" onclick="handleSpinClick()">🎡</div>
 
+<script src="/wheel.js"></script>
+
 <script>
 const tg = window.Telegram?.WebApp || {
   initDataUnsafe: { user: { id: 123456 } },
@@ -243,14 +245,10 @@ tg.ready();
 
 const user = tg.initDataUnsafe.user;
 
-const urlParams = new URLSearchParams(window.location.search);
-const botId = urlParams.get("bot_id");
-const activityId = urlParams.get("activity_id");
-
 document.getElementById("userId").innerText =
   user?.id || "Không rõ";
 
-  // ===== 🔥 新增：加载 game_id =====
+// ===== 🔥 新增：加载 game_id =====
 async function loadGameId() {
   if (!user?.id) return;
 
@@ -275,9 +273,12 @@ function goGetCode() {
   alert("⭐ Vào bot nhập CODE để quay thưởng ⭐");
 }
 
-// ===== 点击转盘（🔥 修复版）=====
+// ===== 点击转盘 =====
 function handleSpinClick() {
-  showErrorModal("👉 Vào bot nhập CODE để quay thưởng");
+  // ✅ 加保护（防报错）
+  if (typeof showErrorModal === "function") {
+    showErrorModal("👉 Vào bot nhập CODE để quay thưởng");
+  }
 }
 
 function goGame() {
@@ -287,9 +288,6 @@ function goGame() {
     window.open("https://your-game-link.com");
   }
 }
-
-// ❌ 删除你原来的 window.onload
 </script>
-<script src="/wheel.js"></script>
 </body>
 </html>

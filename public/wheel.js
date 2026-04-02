@@ -139,13 +139,15 @@ function spinWheel(rewardText) {
 // ===== 抽奖 =====
 const params = new URLSearchParams(window.location.search);
 
-window.onload = async () => {
+window.addEventListener("load", async () => {
+
+  console.log("🔥 wheel.js 已执行");
 
   if (window.Telegram?.WebApp) {
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();
   }
-
+  
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
   const userId = tgUser?.id?.toString();
 
@@ -160,7 +162,7 @@ window.onload = async () => {
   createWheel();
   openWheel();
   startWheelLottery(userId);
-};
+});
 
 const botId = params.get("bot_id");
 const activityId = params.get("activity_id");
