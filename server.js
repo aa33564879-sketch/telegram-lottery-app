@@ -63,6 +63,20 @@ app.post("/api/lottery", async (req, res) => {
     console.log("🎯 API HIT:", req.body);
 
     const { user_id, bot_id, activity_id } = req.body;
+
+// ===== 🔥 获取 bot_token（正确版）=====
+const { data: botRow, error: botError } = await supabase
+  .from("bot_tokens")
+  .select("token")
+  .eq("bot_id", bot_id)
+  .maybeSingle();
+
+if (botError || !botRow?.token) {
+  console.error("❌ bot token error:", botError);
+  return res.json({ success: false, message: "no_bot_token" });
+}
+
+const botToken = botRow.token;
     
     if (!bot_id) {
   return res.json({ success: false, message: "no_bot" });
@@ -147,6 +161,38 @@ if (insertError) {
 
   if (!updated) {
   return res.json({ success: false, message: "used" });
+}
+
+// ===== 🔥 删除按钮 =====
+const { data: msg } = await supabase
+  .from("lottery_message_states")
+  .select("*")
+  .eq("user_id", user_id)
+  .eq("bot_id", bot_id)
+  .eq("activity_id", activity_id)
+  .eq("status", "pending")
+  .limit(1)
+  .maybeSingle();
+
+if (msg?.message_id) {
+  await fetch(`https://api.telegram.org/bot${botToken}/editMessageText`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: user_id,
+      message_id: msg.message_id,
+      text: "✅ 抽奖已完成",
+      reply_markup: { inline_keyboard: [] }
+    })
+  });
+}
+
+// ===== 更新状态 =====
+if (msg?.id) {
+  await supabase
+    .from("lottery_message_states")
+    .update({ status: "used" })
+    .eq("id", msg.id);
 }
 
     // 4️⃣ 返回结果
