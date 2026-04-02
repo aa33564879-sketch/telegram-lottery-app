@@ -119,30 +119,20 @@ if (!gameId) {
 
     console.log("🎉 reward:", data.reward);
 
-   const { data: exists } = await supabase
+   const { error: insertError } = await supabase
   .from("activity_participations")
-  .select("id")
-  .eq("platform_user_id", user_id)
-  .eq("activity_id", activity_id)
-  .eq("bot_id", bot_id)
-  .maybeSingle();
+  .insert({
+    bot_id,
+    activity_id,
+    platform: "telegram",
+    platform_user_id: user_id,
+    game_id: gameId,
+    status: "pending"
+  });
 
-if (!exists) {
-  const { error: insertError } = await supabase
-    .from("activity_participations")
-    .insert({
-      bot_id,
-      activity_id,
-      platform: "telegram",
-      platform_user_id: user_id,
-      game_id: gameId, // ✅ 加这一行
-      status: "pending"
-    });
-
-  if (insertError) {
-    console.error("❌ participation insert error:", insertError);
-    return res.json({ success: false, message: "insert_error" }); // ❗必须 return
-  }
+if (insertError) {
+  console.error("❌ participation insert error:", insertError);
+  return res.json({ success: false, message: "insert_error" });
 }
 
 // 3️⃣ 标记已用
