@@ -117,25 +117,6 @@ if (!gameId) {
   });
 }
 
-    // 3️⃣ 标记已用
-    const { data: updated, error: updateError } = await supabase
-  .from("lottery_users")
-  .update({ used: true })
-  .eq("id", data.id)
-  .eq("used", false)
-  .eq("bot_id", bot_id)
-  .select()
-  .maybeSingle();
-
-  if (!updated) {
-  return res.json({ success: false, message: "used" });
-}
-
-    if (updateError) {
-      console.error("❌ update error:", updateError);
-      return res.json({ success: false, message: "update_error" });
-    }
-
     console.log("🎉 reward:", data.reward);
 
    const { data: exists } = await supabase
@@ -160,7 +141,22 @@ if (!exists) {
 
   if (insertError) {
     console.error("❌ participation insert error:", insertError);
+    return res.json({ success: false, message: "insert_error" }); // ❗必须 return
   }
+}
+
+// 3️⃣ 标记已用
+    const { data: updated, error: updateError } = await supabase
+  .from("lottery_users")
+  .update({ used: true })
+  .eq("id", data.id)
+  .eq("used", false)
+  .eq("bot_id", bot_id)
+  .select()
+  .maybeSingle();
+
+  if (!updated) {
+  return res.json({ success: false, message: "used" });
 }
 
     // 4️⃣ 返回结果
