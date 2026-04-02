@@ -95,8 +95,57 @@ app.post("/api/lottery", async (req, res) => {
     if (!data) {
   return res.json({ success: false, message: "no_chance" });
 }
+   
+// ===== 🔥 新增：查询 game_id =====
+const { data: userRow, error: userError } = await supabase
+  .from("users")
+  .select("game_id")
+  .eq("platform_user_id", user_id)
+  .eq("bot_id", bot_id)
+  .maybeSingle();
 
-    // 3️⃣ 标记已用
+if (userError) {
+  console.error("❌ user query error:", userError);
+}
+
+const gameId = userRow?.game_id || null;
+
+if (!gameId) {
+  return res.json({
+    success: false,
+    message: "no_game_id"
+  });
+}
+
+    console.log("🎉 reward:", data.reward);
+
+   const { data: exists } = await supabase
+  .from("activity_participations")
+  .select("id")
+  .eq("platform_user_id", user_id)
+  .eq("activity_id", activity_id)
+  .eq("bot_id", bot_id)
+  .maybeSingle();
+
+if (!exists) {
+  const { error: insertError } = await supabase
+    .from("activity_participations")
+    .insert({
+      bot_id,
+      activity_id,
+      platform: "telegram",
+      platform_user_id: user_id,
+      game_id: gameId, // ✅ 加这一行
+      status: "pending"
+    });
+
+  if (insertError) {
+    console.error("❌ participation insert error:", insertError);
+    return res.json({ success: false, message: "insert_error" }); // ❗必须 return
+  }
+}
+
+// 3️⃣ 标记已用
     const { data: updated, error: updateError } = await supabase
   .from("lottery_users")
   .update({ used: true })
@@ -108,38 +157,6 @@ app.post("/api/lottery", async (req, res) => {
 
   if (!updated) {
   return res.json({ success: false, message: "used" });
-}
-
-    if (updateError) {
-      console.error("❌ update error:", updateError);
-      return res.json({ success: false, message: "update_error" });
-    }
-
-    console.log("🎉 reward:", data.reward);
-
-   const { data: exists } = await supabase
-  .from("activity_participations")
-  .select("id")
-  .eq("platform_user_id", user_id)
-  .eq("activity_id", activity_id)
-  .eq("bot_id", bot_id)
-  .eq("status", "pending")
-  .maybeSingle();
-
-if (!exists) {
-  const { error: insertError } = await supabase
-    .from("activity_participations")
-    .insert({
-      bot_id,
-      activity_id,
-      platform: "telegram",
-      platform_user_id: user_id,
-      status: "pending"
-    });
-
-  if (insertError) {
-    console.error("❌ participation insert error:", insertError);
-  }
 }
 
     // 4️⃣ 返回结果
