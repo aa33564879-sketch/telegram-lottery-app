@@ -100,7 +100,7 @@ app.post("/api/lottery", async (req, res) => {
 const { data: userRow, error: userError } = await supabase
   .from("users")
   .select("game_id")
-  .eq("platform_user_id", user_id)
+  .eq("platform_user_id", user_id.toString())
   .eq("bot_id", bot_id)
   .maybeSingle();
 
