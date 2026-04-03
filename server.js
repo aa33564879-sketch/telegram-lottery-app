@@ -87,7 +87,7 @@ app.post("/api/lottery", async (req, res) => {
     const { data, error } = await supabase
       .from("lottery_users")
       .select("*")
-      .eq("user_id", user_id)
+      .eq("user_id", user_id.toString())
       .eq("bot_id", bot_id)
       .eq("used", false)
       .order("created_at", { ascending: false })
@@ -124,7 +124,7 @@ app.post("/api/lottery", async (req, res) => {
         bot_id,
         activity_id,
         platform: "telegram",
-        platform_user_id: user_id,
+        platform_user_id: user_id.toString(),
         game_id: gameId,
         status: "pending"
       });
@@ -164,9 +164,9 @@ app.post("/api/lottery", async (req, res) => {
         const { data: msg } = await supabase
           .from("lottery_message_states")
           .select("*")
-          .eq("user_id", user_id)
+          .eq("user_id", user_id.toString())
           .eq("bot_id", bot_id)
-          .eq("activity_id", activity_id)
+          .eq("message_id", msg.message_id)
           .eq("status", "pending")
           .limit(1)
           .maybeSingle();
