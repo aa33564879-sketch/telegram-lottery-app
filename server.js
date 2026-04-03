@@ -84,7 +84,7 @@ app.post("/api/lottery", async (req, res) => {
     const botToken = botRow.token;
 
     // ===== 查抽奖机会 =====
-    const { data, error } = await supabase
+    const { data: lotteryData, error } = await supabase
   .from("lottery_users")
   .select("*")
   .eq("user_id", user_id.toString())
@@ -98,7 +98,7 @@ if (error) {
   return res.json({ success: false, message: "db_error" });
 }
 
-const row = data?.[0];  // ⭐ 关键
+const row = lotteryData?.[0];  // ⭐ 关键
 
 if (!row) {
   return res.json({ success: false, message: "no_chance" });
@@ -152,7 +152,7 @@ if (!row) {
     // ===== ✅ 返回结果（关键）=====
     res.json({
       success: true,
-      reward: data.reward
+      reward: row.reward
     });
 
     // ===== 🔥 异步删除按钮 =====
@@ -167,8 +167,8 @@ if (!row) {
           .select("*")
           .eq("user_id", user_id.toString())
           .eq("bot_id", bot_id)
-          .eq("message_id", msg.message_id)
           .eq("status", "pending")
+          .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
 
