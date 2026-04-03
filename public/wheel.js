@@ -173,6 +173,9 @@ console.log("tg user:", window.Telegram?.WebApp?.initDataUnsafe);
 
   async function startWheelLottery(userId) {
   if (spinning) return;
+  
+  if (window.__lottery_called) return;
+  window.__lottery_called = true;
 
   spinning = true;
 
@@ -209,6 +212,9 @@ console.log("tg user:", window.Telegram?.WebApp?.initDataUnsafe);
 
   } else if (data.message === "no_game_id") {
     showErrorModal("⚠️ Chưa liên kết tài khoản");
+
+   }else if (data.message === "activity_pending") {
+  showErrorModal("⚠️ Bạn đã có lượt đang chờ duyệt");
 
   } else {
     showErrorModal("❌ Lỗi hệ thống");

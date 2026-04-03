@@ -131,10 +131,19 @@ if (!row) {
       });
 
     if (insertError) {
-      console.error("❌ participation insert error:", insertError);
-      return res.json({ success: false, message: "insert_error" });
-    }
 
+  // 🔥 重复参与（pending）
+  if (insertError.code === "23505") {
+    return res.json({
+      success: false,
+      message: "activity_pending"
+    });
+  }
+
+  console.error("❌ participation insert error:", insertError);
+
+  return res.json({ success: false, message: "insert_error" });
+}
     // ===== 标记已用 =====
     const { data: updated } = await supabase
       .from("lottery_users")
