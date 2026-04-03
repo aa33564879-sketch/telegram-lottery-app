@@ -85,23 +85,24 @@ app.post("/api/lottery", async (req, res) => {
 
     // ===== 查抽奖机会 =====
     const { data, error } = await supabase
-      .from("lottery_users")
-      .select("*")
-      .eq("user_id", user_id.toString())
-      .eq("bot_id", bot_id)
-      .eq("used", false)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+  .from("lottery_users")
+  .select("*")
+  .eq("user_id", user_id.toString())
+  .eq("bot_id", bot_id)
+  .eq("used", false)
+  .order("created_at", { ascending: false })
+  .limit(1);
 
-    if (error) {
-      console.error("❌ user query error:", error);
-      return res.json({ success: false, message: "db_error" });
-    }
+if (error) {
+  console.error("❌ user query error:", error);
+  return res.json({ success: false, message: "db_error" });
+}
 
-    if (!data) {
-      return res.json({ success: false, message: "no_chance" });
-    }
+const row = data?.[0];  // ⭐ 关键
+
+if (!row) {
+  return res.json({ success: false, message: "no_chance" });
+}
 
     // ===== 查 game_id =====
     const { data: userRow } = await supabase
@@ -138,7 +139,7 @@ app.post("/api/lottery", async (req, res) => {
     const { data: updated } = await supabase
       .from("lottery_users")
       .update({ used: true })
-      .eq("id", data.id)
+      .eq("id", row.id) 
       .eq("used", false)
       .eq("bot_id", bot_id)
       .select()
