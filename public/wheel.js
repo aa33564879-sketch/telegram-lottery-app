@@ -197,25 +197,35 @@ console.log("tg user:", window.Telegram?.WebApp?.initDataUnsafe);
     const data = await res.json();
 
     // ❌ 失败情况
-    if (!data.success) {
-      if (data.message === "used") {
-        showErrorModal("⭐ Vào bot nhập CODE để quay thưởng ⭐");
-      } else {
-        showErrorModal("Mã CODE sai");
-      }
+   if (!data.success) {
 
-      // 🔓 解锁按钮（关键）
-      closeBtn.style.opacity = "1";
-      closeBtn.style.pointerEvents = "auto";
+  console.log("❌ lottery fail:", data);
 
-      spinning = false;
-      return;
-    }
+  if (data.message === "no_chance") {
+    showErrorModal("⭐ Vào bot nhập CODE để quay thưởng ⭐");
+    
+  } else if (data.message === "used") {
+    showErrorModal("⚠️ Bạn đã quay rồi");
+
+  } else if (data.message === "no_game_id") {
+    showErrorModal("⚠️ Chưa liên kết tài khoản");
+
+  } else {
+    showErrorModal("❌ Lỗi hệ thống");
+  }
+
+  // 🔓 解锁按钮
+  closeBtn.style.opacity = "1";
+  closeBtn.style.pointerEvents = "auto";
+
+  spinning = false;
+  return;
+}
 
     const rewardFull = data.reward;
     const rewardK = rewardFull / 1000;
 
-    await spinWheel(rewardK + "K");
+    await spinWheel((rewardFull / 1000) + "K");
 
     // 🔓 恢复按钮
     closeBtn.style.opacity = "1";

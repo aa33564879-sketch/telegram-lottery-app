@@ -236,12 +236,23 @@
 <script src="/wheel.js"></script>
 
 <script>
-const tg = window.Telegram?.WebApp || {
-  initDataUnsafe: { user: { id: 123456 } },
-  ready: () => {}
-};
+const tg = window.Telegram?.WebApp;
+
+if (!tg) {
+  alert("❌ Vui lòng mở từ Telegram");
+  throw new Error("Not in Telegram");
+}
+
+const params = new URLSearchParams(window.location.search);
+const botId = params.get("bot_id");
+const activityId = params.get("activity_id");
 
 tg.ready();
+
+if (!botId || !activityId) {
+  alert("❌ Vui lòng vào từ bot");
+  throw new Error("Missing params");
+}
 
 const user = tg.initDataUnsafe.user;
 
